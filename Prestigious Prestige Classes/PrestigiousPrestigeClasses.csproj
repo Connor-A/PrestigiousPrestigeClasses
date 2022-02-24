@@ -1,0 +1,200 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+<Import Project="..\packages\Aze.Publicise.MSBuild.Task.1.0.0\build\Aze.Publicise.MSBuild.Task.props" Condition="Exists('..\packages\Aze.Publicise.MSBuild.Task.1.0.0\build\Aze.Publicise.MSBuild.Task.props')" />
+  
+    <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <TargetFramework>net472</TargetFramework>
+    
+    <RootNamespace>Prestigious_Prestige_Classes</RootNamespace>
+    <BaseOutputPath>bin</BaseOutputPath>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <Target Name="RemoveLib" BeforeTargets="Clean" Condition="Exists('$(WRATH_PUB_ASSEMBLY)')">
+    <RemoveDir Directories="$(WRATH_PUB_ASSEMBLY)" />
+  </Target>
+  <Target Name="CreateLib" BeforeTargets="BeforeBuild" AfterTargets="RemoveLib" Condition="!Exists('$(WRATH_PUB_ASSEMBLY)')">
+    <MakeDir Directories="$(WRATH_PUB_ASSEMBLY)" />
+  </Target>
+
+  <!-- Publicize Wotr Source -->
+  <Target Name="Publicize" AfterTargets="Clean">
+    <ItemGroup>
+      <Assemblies Include="$(WRATH_ASSEMBLY)\Assembly-CSharp.dll" />
+      <PublicAssembly Include="$(WRATH_PUB_ASSEMBLY)\Assembly-CSharp_public.dll" />
+      <RenamedAssembly Include="$(WRATH_PUB_ASSEMBLY)\Assembly-CSharp.dll" />
+    </ItemGroup>
+    <ItemGroup>
+      <Assemblies Include="$(WRATH_ASSEMBLY)\Owlcat.Runtime.Core.dll" />
+      <PublicAssembly Include="$(WRATH_PUB_ASSEMBLY)\Owlcat.Runtime.Core_public.dll" />
+      <RenamedAssembly Include="$(WRATH_PUB_ASSEMBLY)\Owlcat.Runtime.Core.dll" />
+    </ItemGroup>
+    <ItemGroup>
+      <Assemblies Include="$(WRATH_ASSEMBLY)\Owlcat.Runtime.Visual.dll" />
+      <PublicAssembly Include="$(WRATH_PUB_ASSEMBLY)\Owlcat.Runtime.Visual_public.dll" />
+      <RenamedAssembly Include="$(WRATH_PUB_ASSEMBLY)\Owlcat.Runtime.Visual.dll" />
+    </ItemGroup>
+    <ItemGroup>
+      <Assemblies Include="$(WRATH_ASSEMBLY)\Owlcat.Runtime.UI.dll" />
+      <PublicAssembly Include="$(WRATH_PUB_ASSEMBLY)\Owlcat.Runtime.UI_public.dll" />
+      <RenamedAssembly Include="$(WRATH_PUB_ASSEMBLY)\Owlcat.Runtime.UI.dll" />
+    </ItemGroup>
+    <ItemGroup>
+      <Assemblies Include="$(WRATH_ASSEMBLY)\UnityEngine.dll" />
+      <PublicAssembly Include="$(WRATH_PUB_ASSEMBLY)\UnityEngine_public.dll" />
+      <RenamedAssembly Include="$(WRATH_PUB_ASSEMBLY)\UnityEngine.dll" />
+    </ItemGroup>
+    <ItemGroup>
+      <Assemblies Include="$(WRATH_ASSEMBLY)\UnityEngine.CoreModule.dll" />
+      <PublicAssembly Include="$(WRATH_PUB_ASSEMBLY)\UnityEngine.CoreModule_public.dll" />
+      <RenamedAssembly Include="$(WRATH_PUB_ASSEMBLY)\UnityEngine.CoreModule.dll" />
+    </ItemGroup>
+
+    <PublicizeTask InputAssemblies="@(Assemblies)" OutputDir="$(WRATH_PUB_ASSEMBLY)" />
+    <Move SourceFiles="@(PublicAssembly)" DestinationFiles="@(RenamedAssembly)" />
+  </Target>
+
+  <!-- DLL Merging -->
+  <Target Name="ILRepack" AfterTargets="Build">
+    <ItemGroup>
+      <InputAssemblies Include="BlueprintCore.dll" />
+      <InputAssemblies Include="PrestigiousPrestigeClasses.dll" />
+      <OutputAssembly Include="PrestigiousPrestigeClasses.dll" />
+    </ItemGroup>
+
+    <Message Text="Merging: @(InputAssemblies) into @(OutputAssembly)" Importance="High" />
+
+    <ILRepack OutputType="Dll" MainAssembly="PrestigiousPrestigeClasses.dll" OutputAssembly="@(OutputAssembly)" InputAssemblies="@(InputAssemblies)" WorkingDirectory="$(OutputPath)" />
+  </Target>
+
+
+  <ItemGroup>
+    <PackageReference Include="AssemblyPublicizer" Version="1.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ILRepack.MSBuild.Task" Version="2.0.13" />
+    <PackageReference Include="WW-Blueprint-Core" Version="1.3.2" />
+  </ItemGroup>
+
+
+  <!-- Publicized References -->
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(WRATH_PUB_ASSEMBLY)\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Owlcat.Runtime.Core">
+      <HintPath>$(WRATH_PUB_ASSEMBLY)\Owlcat.Runtime.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Owlcat.Runtime.Visual">
+      <HintPath>$(WRATH_PUB_ASSEMBLY)\Owlcat.Runtime.Visual.dll</HintPath>
+    </Reference>
+    <Reference Include="Owlcat.Runtime.UI.CoreModule">
+      <HintPath>$(WRATH_PUB_ASSEMBLY)\Owlcat.Runtime.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(WRATH_PUB_ASSEMBLY)\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(WRATH_PUB_ASSEMBLY)\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+
+    <!-- Raw References -->
+    <Reference Include="0Harmony">
+      <HintPath>$(WRATH_ASSEMBLY)\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>$(WRATH_ASSEMBLY)\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(WRATH_ASSEMBLY)\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityModManager">
+      <HintPath>$(WRATH_ASSEMBLY)\UnityModManager\UnityModManager.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Info.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Update="System">
+      <CopyLocal>False</CopyLocal>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Update="System.Core">
+      <CopyLocal>False</CopyLocal>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Update="System.Data">
+      <CopyLocal>False</CopyLocal>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Update="System.Drawing">
+      <CopyLocal>False</CopyLocal>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Update="System.IO.Compression.FileSystem">
+      <CopyLocal>False</CopyLocal>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Update="System.Numerics">
+      <CopyLocal>False</CopyLocal>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Update="System.Runtime.Serialization">
+      <CopyLocal>False</CopyLocal>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Update="System.Xml">
+      <CopyLocal>False</CopyLocal>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Update="System.Xml.Linq">
+      <CopyLocal>False</CopyLocal>
+    </Reference>
+  </ItemGroup>
+</Project>
