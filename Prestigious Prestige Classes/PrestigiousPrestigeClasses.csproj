@@ -6,7 +6,7 @@
     <TargetFramework>net472</TargetFramework>
     
     <RootNamespace>Prestigious_Prestige_Classes</RootNamespace>
-    <BaseOutputPath>bin</BaseOutputPath>
+    <BaseOutputPath>bin\</BaseOutputPath>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
@@ -17,6 +17,7 @@
     <MakeDir Directories="$(WRATH_PUB_ASSEMBLY)" />
   </Target>
 
+  
   <!-- Publicize Wotr Source -->
   <Target Name="Publicize" AfterTargets="Clean">
     <ItemGroup>
@@ -76,6 +77,17 @@
     <PackageReference Include="ILRepack.MSBuild.Task" Version="2.0.13" />
     <PackageReference Include="WW-Blueprint-Core" Version="1.3.2" />
   </ItemGroup>
+
+  <!-- Automatic Deployment Setup -->
+  <Target Name="DeployMod" AfterTargets="ILRepack">
+    <ItemGroup>
+      <Assembly Include="$(OutputPath)\PrestigiousPrestigeClasses.dll" />
+      <ModConfig Include="$(OutputPath)\Info.json" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(Assembly)" DestinationFolder="$(WRATH_PATH)\Mods\PrestigiousPrestigeClasses" />
+    <Copy SourceFiles="@(ModConfig)" DestinationFolder="$(WRATH_PATH)\Mods\PrestigiousPrestigeClasses" />
+  </Target>
 
 
   <!-- Publicized References -->

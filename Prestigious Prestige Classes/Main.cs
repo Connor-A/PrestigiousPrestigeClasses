@@ -2,7 +2,7 @@
 using HarmonyLib;
 using System.Reflection;
 
-namespace Prestigious_Prestige_Classes
+namespace PrestigiousPrestigeClasses
 {
     static class Main
     {

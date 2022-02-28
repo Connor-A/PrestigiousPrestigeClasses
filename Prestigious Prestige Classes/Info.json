@@ -6,5 +6,5 @@
 	"ManagerVersion": "0.21.3",
 	"Requirements": [],
 	"AssemblyName": "PrestigiousPrestigeClasses.dll",
-	"EntryMethod": "Prestigious_Prestige_Classes.Main.Load"
+	"EntryMethod": "PrestigiousPrestigeClasses.Main.Load"
 }
